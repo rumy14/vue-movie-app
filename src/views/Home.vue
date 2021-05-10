@@ -1,53 +1,63 @@
 <template>
   <div class="home">
     <div class="feature-card">
-      <router-link to="/movie/tt0409531">
-        <img src="https://images-na.ssl-images-amazon.com/images/I/8188yESIbLL._AC_SL1500_.jpg" alt="Naruto Poster" class="featured-img" />
+      <router-link to="/movie/tt0409591">
+        <img src="https://m.media-amazon.com/images/M/MV5BZmQ5NGFiNWEtMmMyMC00MDdiLTg4YjktOGY5Yzc2MDUxMTE1XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg" alt="Naruto Poster" class="featured-img" />
         <div class="detail">
           <h3>Naruto</h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus sint vero placeat quis tempore modi optio ullam, 
-            explicabo est? Aliquam minus animi quam ad repudiandae ipsam asperiores facilis maxime unde!
-          </p>
+          <p>Naruto Uzumaki, a mischievous adolescent ninja, struggles as he searches for recognition and dreams of becoming the Hokage, the village's leader and strongest ninja.</p>
         </div>
       </router-link>
     </div>
-    <form @submit.prevent="searchMovies()" class="search-box">
+
+    <form @submit.prevent="SearchMovies()" class="search-box">
       <input type="text" placeholder="What are you looking for?" v-model="search" />
       <input type="submit" value="Search" />
     </form>
 
-    <div class="movie-list">MOVIES</div>
+    <div class="movies-list">
+      <div class="movie" v-for="movie in movies" :key="movie.imdbID">
+        <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
+          <div class="product-image">
+            <img :src="movie.Poster" alt="Movie Poster" />
+            <div class="type">{{ movie.Type }}</div>
+          </div>
+          <div class="detail">
+            <p class="year">{{ movie.Year }}</p>
+            <h3>{{ movie.Title }}</h3>
+          </div>
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue';
 import env from '@/env.js'
-
 export default {
-  setup() {
+  setup () {
     const search = ref("");
     const movies = ref([]);
-    const searchMovies = () => {
-      if(search.value != ""){
-        fetch(`http://www.omdbapi.com/?apiKey=${ env.apiKey }&s=${search.value}`)
+    const SearchMovies = () => {
+      if (search.value != "") {
+        fetch(`http://www.omdbapi.com/?apikey=${env.apiKey}&s=${search.value}`)
           .then(response => response.json())
           .then(data => {
-            console.log(data)
-          })
+            movies.value = data.Search;
+            search.value = "";
+          });
       }
     }
-
     return {
       search,
-      movies, 
-      searchMovies
+      movies,
+      SearchMovies
     }
-
   }
 }
 </script>
+
 <style lang="scss">
 .home {
   .feature-card {
